@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { ArrowRight, MapPin, Phone, Globe, Camera, Share2, X, Compass, Home, TreePine, Building2 } from 'lucide-react';
+import React, { useState, lazy, Suspense } from 'react';
+import { ArrowRight, MapPin, Phone, Globe, Camera, Share2, X, Compass, Home, TreePine, Building2, Box } from 'lucide-react';
+
+const BuildingEditor = lazy(() => import('./editor/BuildingEditor'));
 
 const projects = [
   {
@@ -39,6 +41,7 @@ const projects = [
 
 export default function App() {
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({ name: '', email: '', message: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -90,7 +93,14 @@ export default function App() {
             <a className="text-sm font-medium hover:text-primary transition-colors uppercase tracking-widest" href="#projects">Projects</a>
             <a className="text-sm font-medium hover:text-primary transition-colors uppercase tracking-widest" href="#philosophy">Philosophy</a>
             <a className="text-sm font-medium hover:text-primary transition-colors uppercase tracking-widest" href="#services">Services</a>
-            <button 
+            <button
+              onClick={() => setShowEditor(true)}
+              className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors uppercase tracking-widest cursor-pointer"
+            >
+              <Box className="w-4 h-4" />
+              3D Editor
+            </button>
+            <button
               onClick={() => document.getElementById('inquire-section')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-primary text-white px-8 py-2.5 rounded-lg text-sm font-bold tracking-wide hover:opacity-90 transition-opacity cursor-pointer"
             >
@@ -121,6 +131,13 @@ export default function App() {
               <a href="#projects" className="inline-block bg-white text-slate-900 px-10 py-4 rounded-lg font-bold hover:bg-slate-100 transition-colors uppercase tracking-widest text-sm cursor-pointer">
                 Explore Portfolio
               </a>
+              <button
+                onClick={() => setShowEditor(true)}
+                className="inline-flex items-center gap-2 bg-primary text-white px-10 py-4 rounded-lg font-bold hover:opacity-90 transition-opacity uppercase tracking-widest text-sm cursor-pointer"
+              >
+                <Box className="w-4 h-4" />
+                3D Editor
+              </button>
             </div>
           </div>
         </section>
@@ -412,6 +429,17 @@ export default function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* 3D Building Editor */}
+      {showEditor && (
+        <Suspense fallback={
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-100 dark:bg-slate-900">
+            <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        }>
+          <BuildingEditor onBack={() => setShowEditor(false)} />
+        </Suspense>
       )}
     </div>
   );
